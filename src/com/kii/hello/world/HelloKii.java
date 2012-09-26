@@ -1,10 +1,10 @@
-package com.kii.hello.world;
+package com.kii.app;
 
 import android.app.Application;
 
 import com.kii.cloud.storage.Kii;
 
-public class HelloKii extends Application {
+public class __KII_APP_NAME__ extends Application {
 	
     @Override
     public void onCreate() {
