@@ -1,17 +1,17 @@
-package com.kii.hello.world;
+package com.kii.app;
 
 import android.app.Application;
 
 import com.kii.cloud.storage.Kii;
 
-public class HelloKii extends Application {
+public class __KII_APP_NAME__ extends Application {
 	
     @Override
     public void onCreate() {
         super.onCreate();
                 
         // initialize the Kii SDK!
-        Kii.initialize("sandbox", "dummy", "http://dev-ufe-jp.internal.kii.com:12090");
+        Kii.initialize("__KII_APP_ID__", "__KII_APP_KEY__", "__KII_API_URL__");
     }
 	
 }
