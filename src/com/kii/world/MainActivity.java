@@ -1,4 +1,4 @@
-package com.kii.hello.world;
+package com.kii.world;
 
 import java.util.ArrayList;
 import java.util.List;

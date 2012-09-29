@@ -1,4 +1,4 @@
-package com.kii.hello.world;
+package com.kii.world;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
