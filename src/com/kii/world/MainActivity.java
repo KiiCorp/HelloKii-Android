@@ -3,8 +3,8 @@ package com.kii.world;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -29,9 +29,8 @@ import com.kii.cloud.storage.callback.KiiObjectCallBack;
 import com.kii.cloud.storage.callback.KiiQueryCallBack;
 import com.kii.cloud.storage.query.KiiQuery;
 import com.kii.cloud.storage.query.KiiQueryResult;
-import com.kii.world.R;
 
-public class MainActivity extends ListActivity {
+public class MainActivity extends Activity {
 		
 	private static final String TAG = "MainActivity";
 
@@ -41,6 +40,9 @@ public class MainActivity extends ListActivity {
 	
 	// define the UI elements
     private ProgressDialog mProgress;
+    
+    // define the list
+    private ListView mListView;
     
     // define the list manager
 	private ObjectAdapter mListAdapter;
@@ -115,13 +117,13 @@ public class MainActivity extends ListActivity {
 	}
 	
 	public boolean onOptionsItemSelected(MenuItem item)  {
-		MainActivity.this.addItem();
+		MainActivity.this.addItem(null);
 		return true;
 	}
 
 	// the user has chosen to create an object from the options menu.
 	// perform that action here...
-	private void addItem() {
+	public void addItem(View v) {
 		
 		// show a progress dialog to the user
 		mProgress = ProgressDialog.show(MainActivity.this, "", "Creating Object...", true);
@@ -313,8 +315,10 @@ public class MainActivity extends ListActivity {
 		// create an empty object adapter
 		mListAdapter = new ObjectAdapter(this, R.layout.row, new ArrayList<KiiObject>());	
 		
+		mListView = (ListView) this.findViewById(R.id.list);
+		
 		// set it to our view's list
-		this.setListAdapter(mListAdapter);  
+		mListView.setAdapter(mListAdapter);  
 	
 		// query for any previously-created objects
 		this.loadObjects();
