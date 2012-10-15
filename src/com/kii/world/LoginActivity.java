@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.kii.cloud.storage.KiiUser;
 import com.kii.cloud.storage.callback.KiiUserCallBack;
-import com.kii.world.R;
+import com.kii.cloud.storage.exception.app.AppException;
 
 public class LoginActivity extends Activity {
 	
@@ -99,42 +99,47 @@ public class LoginActivity extends Activity {
     	Log.v(TAG, "Registering: " + username + ":" + password);
     	
     	// create a KiiUser object
-    	KiiUser user = KiiUser.createWithUsername(username);
-    	
-    	// register the user asynchronously
-        user.register(new KiiUserCallBack() {
-        	
-    		// catch the callback's "done" request
-        	public void onRegisterCompleted(int token, KiiUser user, Exception e) {
+    	try {
+        	KiiUser user = KiiUser.createWithUsername(username);
+        	// register the user asynchronously
+            user.register(new KiiUserCallBack() {
+            	
+        		// catch the callback's "done" request
+            	public void onRegisterCompleted(int token, KiiUser user, Exception e) {
 
-    			// hide our progress UI element
-        		mProgress.cancel();
+        			// hide our progress UI element
+            		mProgress.cancel();
 
-        		// check for an exception (successful request if e==null)
-        		if(e == null) {
+            		// check for an exception (successful request if e==null)
+            		if(e == null) {
 
-        			// tell the console and the user it was a success!
-            		Log.v(TAG, "Registered: " + user.toString());
-        			Toast.makeText(LoginActivity.this, "User registered!", Toast.LENGTH_SHORT).show();
+            			// tell the console and the user it was a success!
+                		Log.v(TAG, "Registered: " + user.toString());
+            			Toast.makeText(LoginActivity.this, "User registered!", Toast.LENGTH_SHORT).show();
 
-            		// go to the next screen
-            		Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-            		LoginActivity.this.startActivity(myIntent);
+                		// go to the next screen
+                		Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+                		LoginActivity.this.startActivity(myIntent);
+                		
+            		} 
             		
-        		} 
-        		
-        		// otherwise, something bad happened in the request
-        		else {
-        			
-        			// tell the console and the user there was a failure
-        			Log.v(TAG, "Error registering: " + e.getLocalizedMessage());
-        			Toast.makeText(LoginActivity.this, "Error Registering: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
-        		}
-        		        		
-        	}
-        	
-        }, password);
+            		// otherwise, something bad happened in the request
+            		else {
+            			
+            			// tell the console and the user there was a failure
+            			Log.v(TAG, "Error registering: " + e.getLocalizedMessage());
+            			Toast.makeText(LoginActivity.this, "Error Registering: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            		}
+            		        		
+            	}
+            	
+            }, password);
 
+    	} catch(Exception e) {
+    		mProgress.cancel();
+    		Toast.makeText(this, "Error signing up: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    	}
+    	
     }
 
     
