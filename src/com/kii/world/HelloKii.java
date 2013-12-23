@@ -22,6 +22,7 @@ package com.kii.world;
 import android.app.Application;
 
 import com.kii.cloud.storage.Kii;
+import com.kii.cloud.storage.Kii.Site;
 
 public class HelloKii extends Application {
 	
