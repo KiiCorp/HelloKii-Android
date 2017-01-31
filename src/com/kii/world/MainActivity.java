@@ -35,6 +35,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -49,7 +51,7 @@ import com.kii.cloud.storage.callback.KiiQueryCallBack;
 import com.kii.cloud.storage.query.KiiQuery;
 import com.kii.cloud.storage.query.KiiQueryResult;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements OnItemClickListener {
 		
 	private static final String TAG = "MainActivity";
 
@@ -170,8 +172,8 @@ public class MainActivity extends Activity {
         		if(e == null) {
 
         			// tell the console and the user it was a success!
-        			Toast.makeText(MainActivity.this, "Created object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Created object: " + o.toString());
+        			showToast("Created object");
         			
         			// insert this object into the beginning of the list adapter
         			MainActivity.this.mListAdapter.insert(o, 0);
@@ -182,8 +184,8 @@ public class MainActivity extends Activity {
         		else {
         			
         			// tell the console and the user there was a failure
-        			Toast.makeText(MainActivity.this, "Error creating object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Error creating object: " + e.getLocalizedMessage());
+        			showToast("Error creating object" + e.getLocalizedMessage());
 				}
 				
 			}
@@ -203,7 +205,7 @@ public class MainActivity extends Activity {
 
     	// create an empty KiiQuery (will retrieve all results, sorted by creation date)
         KiiQuery query = new KiiQuery(null);
-        query.sortByAsc("_created");
+        query.sortByDesc("_created");
 
         // define the bucket to query
         KiiBucket bucket = KiiUser.getCurrentUser().bucket(BUCKET_NAME);
@@ -228,7 +230,7 @@ public class MainActivity extends Activity {
 
         			// tell the console and the user it was a success!
 			        Log.v(TAG, "Objects loaded: " + result.getResult().toString());
-        			Toast.makeText(MainActivity.this, "Objects loaded", Toast.LENGTH_SHORT).show();
+        			showToast("Objects loaded");
 
 				} 
         		
@@ -237,7 +239,7 @@ public class MainActivity extends Activity {
 
         			// tell the console and the user there was a failure
         			Log.v(TAG, "Error loading objects: " + e.getLocalizedMessage());
-        			Toast.makeText(MainActivity.this, "Error loading objects: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        			showToast("Error loading objects: " + e.getLocalizedMessage());
 				}
 			}
 		}, query);
@@ -268,8 +270,8 @@ public class MainActivity extends Activity {
 				if(e == null) {
 
         			// tell the console and the user it was a success!
-					Toast.makeText(MainActivity.this, "Deleted object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Deleted object: " + o.toString());
+        			showToast("Deleted object");
         			
         			// remove the object from the list adapter
         			MainActivity.this.mListAdapter.remove(o);
@@ -280,8 +282,8 @@ public class MainActivity extends Activity {
         		else {
 
         			// tell the console and the user there was a failure
-        			Toast.makeText(MainActivity.this, "Error deleting object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Error deleting object: " + e.getLocalizedMessage());
+        			showToast("Error deleting object: " + e.getLocalizedMessage());
 				}
 				
         	}
@@ -292,8 +294,8 @@ public class MainActivity extends Activity {
 	// the user has clicked an item on the list.
 	// we use this action to possibly delete the tapped object.
 	// to confirm, we prompt the user with a dialog:
-	public void onListItemClick(ListView l, View v, final int position, long id) {
-		
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
 		// build the alert
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Would you like to remove this item?")
@@ -304,7 +306,7 @@ public class MainActivity extends Activity {
 					public void onClick(DialogInterface dialog, int id) {
 						
 						// perform the delete action on the tapped object
-						MainActivity.this.performDelete(position);
+						MainActivity.this.performDelete(arg2);
 					}
 				})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -335,6 +337,7 @@ public class MainActivity extends Activity {
 		mListAdapter = new ObjectAdapter(this, R.layout.row, new ArrayList<KiiObject>());	
 		
 		mListView = (ListView) this.findViewById(R.id.list);
+		mListView.setOnItemClickListener(this);
 		
 		// set it to our view's list
 		mListView.setAdapter(mListAdapter);  
@@ -344,4 +347,8 @@ public class MainActivity extends Activity {
 
 	}
 	
+	private void showToast(String message) {
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+	}
+
 }
