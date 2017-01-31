@@ -30,7 +30,6 @@ import android.widget.Toast;
 
 import com.kii.cloud.storage.KiiUser;
 import com.kii.cloud.storage.callback.KiiUserCallBack;
-import com.kii.cloud.storage.exception.app.AppException;
 
 public class LoginActivity extends Activity {
 	
@@ -66,7 +65,7 @@ public class LoginActivity extends Activity {
 
         			// tell the console and the user it was a success!
         			Log.v(TAG, "Logged in: " + user.toString());
-        			Toast.makeText(LoginActivity.this, "User authenticated!", Toast.LENGTH_SHORT).show();
+        			showToast("User authenticated!");
 
             		// go to the main screen
             		Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
@@ -78,8 +77,8 @@ public class LoginActivity extends Activity {
         		else {
         			
         			// tell the console and the user there was a failure
-        			Log.v(TAG, "Error registering: " + e.getLocalizedMessage());
-        			Toast.makeText(LoginActivity.this, "Error registering: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        			Log.v(TAG, "Error authenticating: " + e.getLocalizedMessage());
+        			showToast("Error authenticating: " + e.getLocalizedMessage());
         		}
         		        		
         	} 
@@ -115,7 +114,7 @@ public class LoginActivity extends Activity {
 
             			// tell the console and the user it was a success!
                 		Log.v(TAG, "Registered: " + user.toString());
-            			Toast.makeText(LoginActivity.this, "User registered!", Toast.LENGTH_SHORT).show();
+            			showToast("User registered!");
 
                 		// go to the next screen
                 		Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
@@ -128,7 +127,7 @@ public class LoginActivity extends Activity {
             			
             			// tell the console and the user there was a failure
             			Log.v(TAG, "Error registering: " + e.getLocalizedMessage());
-            			Toast.makeText(LoginActivity.this, "Error Registering: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            			showToast("Error registering: " + e.getLocalizedMessage());
             		}
             		        		
             	}
@@ -137,7 +136,7 @@ public class LoginActivity extends Activity {
 
     	} catch(Exception e) {
     		mProgress.cancel();
-    		Toast.makeText(this, "Error signing up: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+    		showToast("Error signing up: " + e.getLocalizedMessage());
     	}
     	
     }
@@ -153,6 +152,10 @@ public class LoginActivity extends Activity {
         mUsernameField = (TextView) findViewById(R.id.username_field);
         mPasswordField = (TextView) findViewById(R.id.password_field);
         
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
 }
