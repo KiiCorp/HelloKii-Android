@@ -1,6 +1,6 @@
 //
 //
-// Copyright 2012 Kii Corporation
+// Copyright 2017 Kii Corporation
 // http://kii.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,52 +53,52 @@ public class MainActivity extends Activity {
 		
 	private static final String TAG = "MainActivity";
 
-	// define some strings used for creating objects
+	// Define strings used for creating objects.
 	private static final String OBJECT_KEY = "myObjectValue";
 	private static final String BUCKET_NAME = "myBucket";
 	
-	// define the UI elements
+	// Define the UI elements.
     private ProgressDialog mProgress;
     
-    // define the list
+    // Define the list view.
     private ListView mListView;
     
-    // define the list manager
+    // Define the list adapter.
 	private ObjectAdapter mListAdapter;
 	
-	// define the object count
-	// used to easily see object names incrementing
+	// Define the object count to easily see
+	// object names incrementing.
     private int mObjectCount = 0;
 
-    // define a custom list adapter to handle KiiObjects
+    // Define a custom list adapter to handle KiiObjects.
 	public class ObjectAdapter extends ArrayAdapter<KiiObject> {
 
-		// define some vars
+		// Define variables.
 		int resource;
 	    String response;
 	    Context context;
 	    
-	    // initialize the adapter
+	    // Initialize the adapter.
 	    public ObjectAdapter(Context context, int resource, List<KiiObject> items) {
 	        super(context, resource, items);
 	        
-	        // save the resource for later
+	        // Save the resource for later.
 	        this.resource = resource;
 	    }
 	 
 	    @Override
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	    	
-	    	// create the view
+	    	// Define the row view.
 	        LinearLayout rowView;
 	        
-	        // get a reference to the object
+	        // Get a reference to the object.
 	        KiiObject obj = getItem(position);
 	 
-	        // if it's not already created
+	        // If the row view is not yet created
 	        if(convertView == null) {
 	        	
-	        	// create the view by inflating the xml resource (res/layout/row.xml)
+	        	// Create the row view by inflating the xml resource (res/layout/row.xml).
 	        	rowView = new LinearLayout(getContext());
 	            String inflater = Context.LAYOUT_INFLATER_SERVICE;
 	            LayoutInflater vi;
@@ -107,27 +107,27 @@ public class MainActivity extends Activity {
 	            
 	        } 
 	        
-	        // it's already created, reuse it
+	        // If the row view is already created, reuse it.
 	        else {
 	        	rowView = (LinearLayout) convertView;
 	        }
 	        
-	        // get the text fields for the row
+	        // Get the text fields for the row.
 	        TextView titleText = (TextView) rowView.findViewById(R.id.rowTextTitle);
 	        TextView subtitleText = (TextView) rowView.findViewById(R.id.rowTextSubtitle);
 	 
-	        // set the content of the row texts
+	        // Set the content of the row texts.
 	        titleText.setText(obj.getString(OBJECT_KEY));
 	        subtitleText.setText(obj.toUri().toString());
 	 
-	        // return the row view
+	        // Return the row view.
 	        return rowView;
 	    }
 	 
 	}
 	
-	// the user can add items from the options menu. 
-	// create that menu here - from the res/menu/menu.xml file
+	// The user can add items from the options menu.
+	// Create that menu here - from the res/menu/menu.xml file.
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		MenuInflater inflater = getMenuInflater();
@@ -140,48 +140,48 @@ public class MainActivity extends Activity {
 		return true;
 	}
 
-	// the user has chosen to create an object from the options menu.
-	// perform that action here...
+	// The user has chosen to create an object from the options menu.
+	// Perform that action here...
 	public void addItem(View v) {
 		
-		// show a progress dialog to the user
+		// Show a progress dialog.
 		mProgress = ProgressDialog.show(MainActivity.this, "", "Creating Object...", true);
 		
-		// create an incremented title for the object
+		// Create an incremented title for the object.
 		String value = "MyObject " + (++mObjectCount);
 		
-		// get a reference to a KiiBucket
+		// Get a reference to a KiiBucket.
 		KiiBucket bucket = KiiUser.getCurrentUser().bucket(BUCKET_NAME);
 		
-		// create a new KiiObject and set a key/value
+		// Create a new KiiObject instance and set the key-value pair.
 		KiiObject obj = bucket.object();
 		obj.set(OBJECT_KEY, value);
 		
-		// save the object asynchronously
+		// Save the object asynchronously.
 		obj.save(new KiiObjectCallBack() {
 			
-    		// catch the callback's "done" request
+    		// Catch the result from the callback.
 			public void onSaveCompleted(int token, KiiObject o, Exception e) {
 				
-    			// hide our progress UI element
+    			// Hide the progress dialog.
 				mProgress.dismiss();
 
-        		// check for an exception (successful request if e==null)
+        		// Check for an exception. The request was successfully processed if e==null.
         		if(e == null) {
 
-        			// tell the console and the user it was a success!
+        			// Tell the console and the user that the object was created.
         			Toast.makeText(MainActivity.this, "Created object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Created object: " + o.toString());
         			
-        			// insert this object into the beginning of the list adapter
+        			// Insert the object at the beginning of the list adapter.
         			MainActivity.this.mListAdapter.insert(o, 0);
         			
 				} 
         		
-        		// otherwise, something bad happened in the request
+        		// A failure occurred when processing the request.
         		else {
         			
-        			// tell the console and the user there was a failure
+        			// Tell the console and the user that the object was not created.
         			Toast.makeText(MainActivity.this, "Error creating object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Error creating object: " + e.getLocalizedMessage());
 				}
@@ -191,51 +191,51 @@ public class MainActivity extends Activity {
 
 	}
 	
-	// load any existing objects associated with this user from the server.
-	// this is done on view creation
+	// Load any existing objects associated with this user from the server.
+	// This is done on view creation.
 	private void loadObjects() {
 		
-		// default to an empty adapter
+		// Empty the adapter.
 		mListAdapter.clear();
 		
-		// show a progress dialog to the user
+		// Show a progress dialog.
     	mProgress = ProgressDialog.show(MainActivity.this, "", "Loading...", true);
 
-    	// create an empty KiiQuery (will retrieve all results, sorted by creation date)
+    	// Create an empty KiiQuery. This query will retrieve all results sorted by the creation date.
         KiiQuery query = new KiiQuery(null);
         query.sortByAsc("_created");
 
-        // define the bucket to query
+        // Define the bucket to query.
         KiiBucket bucket = KiiUser.getCurrentUser().bucket(BUCKET_NAME);
         
-        // perform the query
+        // Perform the query.
         bucket.query(new KiiQueryCallBack<KiiObject>() {
 
-    		// catch the callback's "done" request
+    		// Catch the result from the callback method.
         	public void onQueryCompleted(int token, KiiQueryResult<KiiObject> result, Exception e) {
 				
-    			// hide our progress UI element
+    			// Hide the progress dialog.
 				mProgress.dismiss();
 
-        		// check for an exception (successful request if e==null)
+        		// Check for an exception. The request was successfully processed if e==null.
         		if(e == null) {
 
-        			// add the objects to the adapter (adding to the listview)
+        			// Add the objects to the list view via the adapter.
 					List<KiiObject> objLists = result.getResult();
 			        for (KiiObject obj : objLists) {
 			        	mListAdapter.add(obj);
 			        }
 
-        			// tell the console and the user it was a success!
+        			// Tell the console and the user that objects were loaded.
 			        Log.v(TAG, "Objects loaded: " + result.getResult().toString());
         			Toast.makeText(MainActivity.this, "Objects loaded", Toast.LENGTH_SHORT).show();
 
 				} 
         		
-        		// otherwise, something bad happened in the request
+        		// A failure occurred when processing the request.
         		else {
 
-        			// tell the console and the user there was a failure
+        			// Tell the console and the user that objects were not loaded.
         			Log.v(TAG, "Error loading objects: " + e.getLocalizedMessage());
         			Toast.makeText(MainActivity.this, "Error loading objects: " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
 				}
@@ -245,41 +245,41 @@ public class MainActivity extends Activity {
 		
 	}
 	
-	// the user has chosen to delete an object
-	// perform that action here...
+	// The user has chosen to delete an object.
+	// Perform that action here...
 	void performDelete(int position) { 
 		
-		// show a progress dialog to the user
+		// Show a progress dialog.
     	mProgress = ProgressDialog.show(MainActivity.this, "", "Deleting object...", true);
 
-    	// get the object to delete based on the index of the row that was tapped
+    	// Get the object to delete with the index number of the tapped row.
 		final KiiObject o = MainActivity.this.mListAdapter.getItem(position);
 		
-		// delete the object asynchronously
+		// Delete the object asynchronously.
         o.delete(new KiiObjectCallBack() {
         	
-    		// catch the callback's "done" request
+    		// Catch the result from the callback method.
         	public void onDeleteCompleted(int token, Exception e) {
 				
-    			// hide our progress UI element
+    			// Hide the progress dialog.
 				mProgress.dismiss();
 				
-        		// check for an exception (successful request if e==null)
+        		// Check for an exception. The request was successfully processed if e==null.
 				if(e == null) {
 
-        			// tell the console and the user it was a success!
+        			// Tell the console and the user that the object was deleted.
 					Toast.makeText(MainActivity.this, "Deleted object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Deleted object: " + o.toString());
         			
-        			// remove the object from the list adapter
+        			// Remove the object from the list adapter.
         			MainActivity.this.mListAdapter.remove(o);
         			
 				} 
 				
-        		// otherwise, something bad happened in the request
+        		// A failure occurred when processing the request.
         		else {
 
-        			// tell the console and the user there was a failure
+        			// Tell the console and the user that the object was not deleted.
         			Toast.makeText(MainActivity.this, "Error deleting object", Toast.LENGTH_SHORT).show();
         			Log.d(TAG, "Error deleting object: " + e.getLocalizedMessage());
 				}
@@ -289,35 +289,35 @@ public class MainActivity extends Activity {
 	}
 	
 	
-	// the user has clicked an item on the list.
-	// we use this action to possibly delete the tapped object.
-	// to confirm, we prompt the user with a dialog:
+	// The user has tapped an object on the list.
+	// This action is used to possibly delete the tapped object.
+	// To confirm deletion, show a dialog to the user.
 	public void onListItemClick(ListView l, View v, final int position, long id) {
 		
-		// build the alert
+		// Build an alert dialog.
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Would you like to remove this item?")
 				.setCancelable(true)
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
-					// if the user chooses 'yes', 
+					// If the user chooses "Yes"
 					public void onClick(DialogInterface dialog, int id) {
 						
-						// perform the delete action on the tapped object
+						// Perform the delete action to the tapped object.
 						MainActivity.this.performDelete(position);
 					}
 				})
 				.setNegativeButton("No", new DialogInterface.OnClickListener() {
 					
-					// if the user chooses 'no'
+					// If the user chooses "No"
 					public void onClick(DialogInterface dialog, int id) {
 						
-						// simply dismiss the dialog
+						// Simply dismiss the dialog.
 						dialog.cancel();
 					}
 				});
 		
-		// show the dialog
+		// Show the alert dialog.
 		builder.create().show();
 		
 	}
@@ -328,18 +328,18 @@ public class MainActivity extends Activity {
 		
 		super.onCreate(savedInstanceState);
 				
-		// set our view to the xml in res/layout/main.xml
+		// Display the layout defined in res/layout/main.xml to the screen.
 		setContentView(R.layout.main);
 					
-		// create an empty object adapter
+		// Create an empty object adapter.
 		mListAdapter = new ObjectAdapter(this, R.layout.row, new ArrayList<KiiObject>());	
 		
 		mListView = (ListView) this.findViewById(R.id.list);
 		
-		// set it to our view's list
+		// Set the adapter to the list view.
 		mListView.setAdapter(mListAdapter);  
 	
-		// query for any previously-created objects
+		// Query for any objects created previously.
 		this.loadObjects();
 
 	}
