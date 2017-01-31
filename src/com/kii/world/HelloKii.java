@@ -1,6 +1,6 @@
 //
 //
-// Copyright 2012 Kii Corporation
+// Copyright 2017 Kii Corporation
 // http://kii.com
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ public class HelloKii extends Application {
     public void onCreate() {
         super.onCreate();
                 
-        // initialize the Kii SDK!
+        // Initialize the Kii Cloud SDK.
         Kii.initialize("__KII_APP_ID__", "__KII_APP_KEY__", __KII_APP_SITE__);
     }
 	
